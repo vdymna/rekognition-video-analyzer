@@ -1,6 +1,7 @@
 .vscode/
 Pipfile.lock
 config.dev.json
+videos/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

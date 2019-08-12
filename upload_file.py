@@ -3,9 +3,9 @@ import boto3
 import click
 
 
-@click.option('--profile', default=None, help="Specify AWS profile name")
-@click.argument('pathname', type=click.Path(exists=True))
+@click.option('--profile', default=None, help="Specify AWS profile name.")
 @click.argument('bucketname')
+@click.argument('pathname', type=click.Path(exists=True))
 @click.command()
 def upload_file(profile, pathname, bucketname):
     """Upload file to S3 bucket."""
@@ -24,5 +24,5 @@ def upload_file(profile, pathname, bucketname):
     else:
         print("error")
 
-if __name__ == 'main':
+if __name__ == '__main__':
     upload_file()
