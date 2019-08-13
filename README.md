@@ -9,7 +9,7 @@ Install [pipenv](https://docs.pipenv.org/en/latest/) to manage a virtualenv and 
 `pip3 install pipenv`
 
 # Development and Deployment
-Create `config.dev.json` file based on config template and specify aws profile to use, desired S3 bucket name and Dynamo DB table name. Serverless framework will create those resources on deployment.
+Create `config.dev.json` file based on config template and specify aws profile to use, desired S3 bucket name and DynamoDB table name. Serverless framework will create those resources during deployment.
 
 To deploy run  
 `serverless deploy`
