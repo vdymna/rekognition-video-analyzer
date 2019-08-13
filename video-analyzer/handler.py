@@ -21,4 +21,4 @@ def start_label_detection(bucket_name, key):
             }
         })
     
-    return
+    return response
