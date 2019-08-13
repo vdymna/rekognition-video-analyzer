@@ -14,6 +14,7 @@ def start_processing_video(event, context):
 
     return
 
+
 # second handler
 def handle_label_detection(event, context):
     for record in event['Records']:
@@ -30,6 +31,7 @@ def handle_label_detection(event, context):
 
 
 def start_label_detection(bucket_name, key):
+    """Start rekognition label detection for S3 object."""
     rekognition_client = boto3.client('rekognition')
     response = rekognition_client.start_label_detection(
         Video={
@@ -47,6 +49,7 @@ def start_label_detection(bucket_name, key):
 
 
 def get_label_detection_data(job_id):
+    """Get rekognition label detection data by job id."""
     rekognition_client = boto3.client('rekognition')
     
     response_data = rekognition_client.get_label_detection(JobId=job_id)
@@ -62,6 +65,7 @@ def get_label_detection_data(job_id):
 
 
 def transform_data(labels_data, s3_bucket, s3_object):
+    """Transform video labels data for DynamoDB."""
     del labels_data['JobStatus']
     del labels_data['NextToken']
     del labels_data['ResponseMetadata']
@@ -75,6 +79,7 @@ def transform_data(labels_data, s3_bucket, s3_object):
 
 
 def recursive_format_item(data):
+    """Recursively convert all floats to string value in the data dictionary."""
     if isinstance(data, dict):
         return { k: recursive_format_item(v) for k, v in data.items() }
 
@@ -88,6 +93,7 @@ def recursive_format_item(data):
 
 
 def put_labels_in_db(labels_data):
+    """Save data to DynamoDB table."""
     dynamodb = boto3.resource('dynamodb')
     
     print(labels_data)
