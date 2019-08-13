@@ -45,6 +45,7 @@ provider:
 
 # you can define service wide environment variables here
   environment:
+    DYNAMODB_TABLE_NAME: ${file(../config.${self:provider.stage}.json):videos_table}
     REKOGNITION_SNS_TOPIC_ARN: ${self:custom.rekognitionSNSTopicArn}
     REKOGNITION_ROLE_ARN: 
       Fn::GetAtt: [ RekognitionSNSPublishRole, Arn ]
@@ -70,6 +71,21 @@ functions:
 # you can add CloudFormation resource templates here
 resources:
   Resources:
+    VideosTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: VideoName
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: VideoName
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 2
+          WriteCapacityUnits: 2
+        TableName: ${file(../config.${self:provider.stage}.json):videos_table}
     RekognitionSNSPublishRole:
       Type: AWS::IAM::Role
       Properties:
