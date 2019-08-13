@@ -1,5 +1,5 @@
 # Rekognition Video Analyzer
-Python serverless project to automate interaction with Amazon Rekognition to analyze videos (label detection) loaded into S3 bucket.
+Serverless project using Boto3 and Python Lambda functions to automate interaction with Amazon Rekognition to analyze videos. Rekognition label detection analysis is trigger by uploading a video file to configured S3 bucket. The results of the analysis are stored in a DynamoDB table. Video files need to be in mp4 format.
 
 ## Prerequisites
 Install [serverless framework](https://serverless.com/) using npm   
