@@ -41,6 +41,11 @@ provider:
         - "iam:PassRole"
       Resource:
         - Fn::GetAtt: [ RekognitionSNSPublishRole, Arn ]
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:PutItem"
+      Resource:
+        - Fn::GetAtt: [ VideosTable, Arn ]
 
 
 # you can define service wide environment variables here
@@ -56,7 +61,7 @@ custom:
 
 functions:
   start-processing-video:
-    handler: handler.start_processing_video
+    handler: start_processing_video.handler
     events:
       - s3:
           bucket: ${file(../config.${self:provider.stage}.json):videos_bucket}
@@ -64,7 +69,7 @@ functions:
           rules:
             - suffix: ".mp4"
   handle-label-detection:
-    handler: handler.handle_label_detection
+    handler: handle_label_detection.handler
     events:
       - sns: handle-label-detection-topic
 

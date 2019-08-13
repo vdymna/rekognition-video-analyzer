@@ -1,51 +1,20 @@
 import os
-import urllib
 import json
 import boto3
 
 
-# first handler
-def start_processing_video(event, context):
-    for record in event['Records']:
-        start_label_detection(
-            record['s3']['bucket']['name'], 
-            urllib.parse.unquote_plus(record['s3']['object']['key'])
-        )
-
-    return
-
-
-# second handler
-def handle_label_detection(event, context):
+def handler(event, context):
     for record in event['Records']:
         message = json.loads(record['Sns']['Message'])
         
         job_id = message['JobId']
-        s3_bucket = message['Video']['S3ObjectName']
-        s3_object = message['Video']['S3Bucket']
+        s3_bucket = message['Video']['S3Bucket']
+        s3_object = message['Video']['S3ObjectName']
 
         label_detection_data = get_label_detection_data(job_id)
         video_labels = transform_data(label_detection_data, s3_bucket, s3_object)
 
         put_labels_in_db(video_labels)
-
-
-def start_label_detection(bucket_name, key):
-    """Start rekognition label detection for S3 object."""
-    rekognition_client = boto3.client('rekognition')
-    response = rekognition_client.start_label_detection(
-        Video={
-            'S3Object': { 
-                'Bucket': bucket_name, 
-                'Name': key 
-            }
-        },
-        NotificationChannel={
-            'SNSTopicArn': os.environ['REKOGNITION_SNS_TOPIC_ARN'],
-            'RoleArn': os.environ['REKOGNITION_ROLE_ARN']
-        })
-    
-    return
 
 
 def get_label_detection_data(job_id):
@@ -96,8 +65,9 @@ def put_labels_in_db(labels_data):
     """Save data to DynamoDB table."""
     dynamodb = boto3.resource('dynamodb')
     
-    print(labels_data)
-    
     table_name = os.environ['DYNAMODB_TABLE_NAME']
     videos_table = dynamodb.Table(table_name)
-    videos_table.put_item(labels_data)
+    dynamodb_response = videos_table.put_item(Item=labels_data)
+    
+    print(dynamodb_response)
+        
